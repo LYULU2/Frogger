@@ -1,0 +1,9 @@
+bin/
+
+.settings/
+*.class
+.classpath
+build.fxbuild
+*.mp3
+.project
+.txt.db

@@ -1,14 +1,20 @@
 package models;
 
 import javafx.scene.image.Image;
-
-public class Turtle extends Actor{
+/**
+ * represent the turtle objects that won't turn their bodies in the water
+ * @author Luer Lyu
+ *
+ */
+public class Turtle extends DynamicDefault{
 	Image turtle1;
 	Image turtle2;
 	Image turtle3;
-	private int speed;
-	//int i = 1;
 	boolean bool = true;
+	/**
+	 * set the position of the actor in every frame
+	 * @param now long number representing current time in milli seconds
+	 */
 	@Override
 	public void act(long now) {
 
@@ -23,14 +29,17 @@ public class Turtle extends Actor{
 					setImage(turtle3);
 					
 				}
-			
-		move(speed , 0);
-		if (getX() > 600 && speed>0)
-			setX(-200);
-		if (getX() < -75 && speed<0)
-			setX(600);
+				super.act(now);
 	}
-	public Turtle(int xpos, int ypos, int s, int w, int h) {
+	/**
+	 * set the image for Turtle
+	 * @param xpos x position
+	 * @param ypos y position
+	 * @param s double representing moving speed
+	 * @param w int representing width
+	 * @param h int representing height
+	 */
+	public Turtle(int xpos, int ypos, double s, int w, int h) {
 		turtle1 = new Image("file:img/TurtleAnimation1.png", w, h, true, true);
 		turtle2 = new Image("file:img/TurtleAnimation2.png", w, h, true, true);
 		turtle3 = new Image("file:img/TurtleAnimation3.png", w, h, true, true);
@@ -38,5 +47,9 @@ public class Turtle extends Actor{
 		setY(ypos);
 		speed = s;
 		setImage(turtle2);
+		xForwardBound = 600;
+		xBackwardBound = -75;
+		xForwardPos = -200;
+		xBackwardPos = 600;
 	}
 }

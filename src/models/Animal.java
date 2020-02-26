@@ -2,14 +2,14 @@ package models;
 
 import java.util.ArrayList;
 
-import javafx.event.EventHandler;
-
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
-
-public class Animal extends Actor {
+/**
+ * this abstract class represent the basic actions for any frogger
+ * @author Luer Lyu
+ *
+ */
+abstract public class Animal extends Actor {
 	Image imgW1;
 	Image imgA1;
 	Image imgS1;
@@ -18,11 +18,12 @@ public class Animal extends Actor {
 	Image imgA2;
 	Image imgS2;
 	Image imgD2;
-	public int points = 0;
-	int end = 0;
-	int livesCount =3;
+	// share common life and score and end
+	public static int points = 0;
+	public static int end = 0;
+	public static int livesCount =3;
 	// this changes in turn to decide the picture to use
-	private boolean second = false;
+	boolean second = false;
 	boolean noMove = false;
 	double movement = 13.3333333*2;
 	double movementX = 10.666666*2;
@@ -35,221 +36,35 @@ public class Animal extends Actor {
 	int carD = 0;
 	double w = 800;
 	ArrayList<End> inter = new ArrayList<End>();
-	private void goBack() {
-		setX(300);
-		setY(685.8+movement);
-	}
-	public Animal(String imageLink) {
-		setImage(new Image(imageLink, imgSize, imgSize, true, true));
-		goBack();
-		imgW1 = new Image("file:img/froggerUp.png", imgSize, imgSize, true, true);
-		imgA1 = new Image("file:img/froggerLeft.png", imgSize, imgSize, true, true);
-		imgS1 = new Image("file:img/froggerDown.png", imgSize, imgSize, true, true);
-		imgD1 = new Image("file:img/froggerRight.png", imgSize, imgSize, true, true);
-		imgW2 = new Image("file:img/froggerUpJump.png", imgSize, imgSize, true, true);
-		imgA2 = new Image("file:img/froggerLeftJump.png", imgSize, imgSize, true, true);
-		imgS2 = new Image("file:img/froggerDownJump.png", imgSize, imgSize, true, true);
-		imgD2 = new Image("file:img/froggerRightJump.png", imgSize, imgSize, true, true);
-		
-		/*
-		 * when a key is pressed
-		 */
-		setOnKeyPressed(new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent event){
-				/*
-				 * if onMove then the action is locked
-				 */
-				if (noMove) {}
-				else {
-				if (second) {
-					if (event.getCode() == KeyCode.W) {	  
-		                move(0, -movement);
-		                changeScore = false;
-		                setImage(imgW1);
-		                second = false;
-		            }
-		            else if (event.getCode() == KeyCode.A) {	            	
-		            	 move(-movementX, 0);
-		            	 setImage(imgA1);
-		            	 second = false;
-		            }
-		            else if (event.getCode() == KeyCode.S) {	            	
-		            	 move(0, movement);
-		            	 setImage(imgS1);
-		            	 second = false;
-		            }
-		            else if (event.getCode() == KeyCode.D) {	            	
-		            	 move(movementX, 0);
-		            	 setImage(imgD1);
-		            	 second = false;
-		            }
-				}
-				else if (event.getCode() == KeyCode.W) {	            	
-	                move(0, -movement);
-	                setImage(imgW2);
-	                second = true;
-	            }
-	            else if (event.getCode() == KeyCode.A) {	            	
-	            	 move(-movementX, 0);
-	            	 setImage(imgA2);
-	            	 second = true;
-	            }
-	            else if (event.getCode() == KeyCode.S) {	            	
-	            	 move(0, movement);
-	            	 setImage(imgS2);
-	            	 second = true;
-	            }
-	            else if (event.getCode() == KeyCode.D) {	            	
-	            	 move(movementX, 0);
-	            	 setImage(imgD2);
-	            	 second = true;
-	            }
-	        }
-			}
-		});	
-		/*
-		 *  when the key is released
-		 */
-		setOnKeyReleased(new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent event) {
-				if (noMove) {}
-				else {
-				if (event.getCode() == KeyCode.W) {	  
-					if (getY() < w) {
-						changeScore = true;
-						w = getY();
-						points+=10;
-					}
-	                move(0, -movement);
-	                setImage(imgW1);
-	                second = false;
-	            }
-	            else if (event.getCode() == KeyCode.A) {	            	
-	            	 move(-movementX, 0);
-	            	 setImage(imgA1);
-	            	 second = false;
-	            }
-	            else if (event.getCode() == KeyCode.S) {	            	
-	            	 move(0, movement);
-	            	 setImage(imgS1);
-	            	 second = false;
-	            }
-	            else if (event.getCode() == KeyCode.D) {	            	
-	            	 move(movementX, 0);
-	            	 setImage(imgD1);
-	            	 second = false;
-	            }
-	        }
-			}
-			
-		});
-	}
-	/*
-	 * animations when frog is dead
+	/**
+	 * set the position of the animal to the original
 	 */
+	abstract public void goBack();
+	/**
+	 * constructor for animal
+	 */
+	public Animal() {
+		goBack();
+	}
 	@Override
+	/**
+	 * changes the status
+	 * @param a lone number representing current time in milli seconds
+	 */
 	public void act(long now) {
-		//int bounds = 0;
-		/*
-		 * if out of bounds, then the movement is invalid (y)
-		 */
-		if (getY()<0||getY()>724) {
-			goBack();
-		}
-		/*
-		 * if out of bounds, then the movement is invalid (x)
-		 */
-		if (getX()>600) {
-			move(-movementX*2, 0);
-		}
-		if (getX()<0) {
-			move(movementX*2, 0);
-		}
-		if (carDeath) {
-			noMove = true;
-			if ((now)% 11 ==0) {
-				carD++;
-			}
-			if (carD==1) {
-				setImage(new Image("file:img/cardeath1.png", imgSize, imgSize, true, true));
-			}
-			if (carD==2) {
-				setImage(new Image("file:img/cardeath2.png", imgSize, imgSize, true, true));
-			}
-			if (carD==3) {
-				setImage(new Image("file:img/cardeath3.png", imgSize, imgSize, true, true));
-			}
-			if (carD == 4) {
-				goBack();
-				carDeath = false;
-				changeLives = true;
-				carD = 0;
-				setImage(new Image("file:img/froggerUp.png", imgSize, imgSize, true, true));
-				noMove = false;
-				if (points>50) {
-					points-=50;
-					changeScore = true;
-					
-				}
-			}
-			
-		}
-		if (waterDeath) {
-			noMove = true;
-			if ((now)% 11 ==0) {
-				carD++;
-			}
-			if (carD==1) {
-				setImage(new Image("file:img/waterdeath1.png", imgSize,imgSize , true, true));
-			}
-			if (carD==2) {
-				setImage(new Image("file:img/waterdeath2.png", imgSize,imgSize , true, true));
-			}
-			if (carD==3) {
-				setImage(new Image("file:img/waterdeath3.png", imgSize,imgSize , true, true));
-			}
-			if (carD == 4) {
-				setImage(new Image("file:img/waterdeath4.png", imgSize,imgSize , true, true));
-			}
-			if (carD == 5) {
-				goBack();
-				waterDeath = false;
-				changeLives = true;
-				carD = 0;
-				setImage(new Image("file:img/froggerUp.png", imgSize, imgSize, true, true));
-				noMove = false;
-				if (points>50) {
-					points-=50;
-					changeScore = true;
-				}
-			}
-			
-		}
-		
-		/*
-		 * if runs into a car object
-		 */
-		if (getIntersectingObjects(Obstacle.class).size() >= 1) {
-			carDeath = true;
-		}
-		/*
-		 * if on the log
-		 */
+		conditionSimpleCheck(now);
+		// if on the log
 		if (getIntersectingObjects(Log.class).size() >= 1 && !noMove) {
 			if(getIntersectingObjects(Log.class).get(0).getLeft())
 				move(-2,0);
 			else
 				move (.75,0);
 		}
-		/*
-		 * if on the turtle
-		 */
+		// if on the turtle
 		else if (getIntersectingObjects(Turtle.class).size() >= 1 && !noMove) {
 			move(-1,0);
 		}
-		/*
-		 * if on the wet turtle
-		 */
+		// if on the wet turtle
 		else if (getIntersectingObjects(WetTurtle.class).size() >= 1) {
 			if (getIntersectingObjects(WetTurtle.class).get(0).isSunk()) {
 				waterDeath = true;
@@ -257,65 +72,177 @@ public class Animal extends Actor {
 				move(-1,0);
 			}
 		}
-		/*
-		 * if being eaten by a croc
-		 */
-		else if(getIntersectingObjects(Croc.class).size() >= 1) {
-			points-=50;
-			changeScore = true;
-			goBack();
+		else if (getIntersectingObjects(CrocEnd.class).size() >= 1) {
+			endFrogOperation();
 		}
 		else if(getIntersectingObjects(WaterCroc.class).size() >= 1) {
 			playSound = true;
 			goBack();
 		}
 		else if (getIntersectingObjects(End.class).size() >= 1) {
-			inter = (ArrayList<End>) getIntersectingObjects(End.class);
-			/*
-			 * if the end is occupied
-			 */
-			if (getIntersectingObjects(End.class).get(0).isActivated()) {
-				waterDeath = true;
-			}
-			/*
-			 * if wins
-			 */
-			else{
-				points+=50;
-				w=800;
-				getIntersectingObjects(End.class).get(0).setEnd();
-				end++;
-				changeScore = true;
-				goBack();
-			}
-			
+			endOperation();
 		}
-		/*
-		 * when frog is in the water
-		 */
+		//when frog is in the water
 		else if (getY()<413){
 			waterDeath = true;
 		}
 	}
-	/*
-	 * if all the ends have been achieved
+	/**
+	 * check the simple boxes, e.g. if it's out of bound
+	 * or if it's been hit by a car
+	 * @param now long number represents the current time
+	 */
+	public void conditionSimpleCheck(long now) {
+		// if out of bounds, then the movement is invalid
+		if (getY()<0||getY()>724) {
+			goBack();
+		}
+		if (getX()>580) {
+			move(-movementX*2, 0);
+		}
+		if (getX()<0) {
+			move(movementX*2, 0);
+		}
+		if (carDeath) {
+			hitByCar(now);		
+		}
+		if (waterDeath) {
+			fallWater(now);
+		}
+		//if runs into a car object or snake
+		if (getIntersectingObjects(Obstacle.class).size() >= 1||
+				getIntersectingObjects(Snake.class).size() >= 1) {
+			carDeath = true;
+		}
+	}
+	/**
+	 * set the operation when frog reaches the end
+	 */
+	public void endOperation() {
+		inter = (ArrayList<End>) getIntersectingObjects(End.class);
+		// if the end is occupied
+		if (getIntersectingObjects(End.class).get(0).isActivated()) {
+			waterDeath = true;
+		}
+		// if wins
+		else{
+			points+=50;
+			w=800;
+			getIntersectingObjects(End.class).get(0).setEnd();
+			end++;
+			changeScore = true;
+			goBack();
+		}
+	}
+	/**
+	 * actions been taken when frog reaches frogEnd
+	 */
+	public void endFrogOperation() {
+		if(getIntersectingObjects(CrocEnd.class).get(0).isActivated()) {
+			waterDeath = true;
+		}
+		else if (getIntersectingObjects(CrocEnd.class).get(0).getEaten()) {
+			carDeath = true;
+		}else {
+			points+=50;
+			w=800;
+			getIntersectingObjects(CrocEnd.class).get(0).setEnd();
+			end++;
+			changeScore = true;
+			goBack();
+		}
+	}
+	/**
+	 * generate actions when been hit by car
+	 * @param now long represents the current time
+	 */
+	public void hitByCar(long now) {
+		noMove = true;
+		if ((now)% 11 ==0) {
+			carD++;
+		}
+		if (carD==1) {
+			setImage(new Image("file:img/cardeath1.png", imgSize, imgSize, true, true));
+		}
+		if (carD==2) {
+			setImage(new Image("file:img/cardeath2.png", imgSize, imgSize, true, true));
+		}
+		if (carD==3) {
+			setImage(new Image("file:img/cardeath3.png", imgSize, imgSize, true, true));
+		}
+		if (carD == 4) {
+			goBack();
+			carDeath = false;
+			changeLives = true;
+			carD = 0;
+			
+			noMove = false;
+			if (points>50) {
+				points-=50;
+				changeScore = true;
+				
+			}
+		}
+	}
+	/**
+	 * generate actions when object fell into water
+	 * @param now long represents the current time
+	 */
+	public void fallWater(long now) {
+		noMove = true;
+		if ((now)% 11 ==0) {
+			carD++;
+		}
+		if (carD==1) {
+			setImage(new Image("file:img/waterdeath1.png", imgSize,imgSize , true, true));
+		}
+		if (carD==2) {
+			setImage(new Image("file:img/waterdeath2.png", imgSize,imgSize , true, true));
+		}
+		if (carD==3) {
+			setImage(new Image("file:img/waterdeath3.png", imgSize,imgSize , true, true));
+		}
+		if (carD == 4) {
+			setImage(new Image("file:img/waterdeath4.png", imgSize,imgSize , true, true));
+		}
+		if (carD == 5) {
+			goBack();
+			waterDeath = false;
+			changeLives = true;
+			carD = 0;
+			//setImage(new Image("file:img/froggerUp.png", imgSize, imgSize, true, true));
+			noMove = false;
+			if (points>50) {
+				points-=50;
+				changeScore = true;
+			}
+		}
+	}
+	/**
+	 * get the status of the game
+	 * @return true if all ends are filled, otherwise false
 	 */
 	public boolean win() {
-		return (end==1);
+		return (end==5);
 	}
-	
+	/**
+	 * get the status of the game
+	 * @return true if all lives are used, otherwise false
+	 */
 	public boolean lose() {
 		return (livesCount == 0);
 	}
-	/*
-	 * return the score
+	/**
+	 * get the current point
+	 * @return an int of the current points
 	 */
-	public int getPoints() {
+	public static int getPoints() {
 		return points;
 	}
 	
-	/*
-	 * return the score to timer to update the score
+	/**
+	 * tell the controller if score is updated
+	 * @return true if score is changed, false otherwise
 	 */
 	public boolean changeScore() {
 		if (changeScore) {
@@ -325,7 +252,10 @@ public class Animal extends Actor {
 		return false;
 		
 	}
-	
+	/**
+	 * update status of the game
+	 * @return true if one life is cost, false otherwise
+	 */
 	public boolean changeLives() {
 		if(changeLives) {
 			livesCount--;
@@ -334,7 +264,10 @@ public class Animal extends Actor {
 		}
 		return false;
 	}
-	
+	/**
+	 * update the name of the song
+	 * @return true of the song needs to be changed, false otherwise
+	 */
 	public boolean playSound() {
 		if (playSound) {
 			playSound = false;
@@ -342,5 +275,12 @@ public class Animal extends Actor {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * set everything to default before next round
+	 */
+	public void setDefault() {
+		Animal.livesCount = 3;
+		Animal.end = 0;
+	}
 }

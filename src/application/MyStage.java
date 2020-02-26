@@ -5,8 +5,17 @@ import java.io.File;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+/**
+ * user-defined pane used for this game
+ * @author Luer Lyu
+ *
+ */
 public class MyStage extends World{
 	MediaPlayer mediaPlayer;
+	/**
+	 * change the status of the game
+	 * @param now current time in milli-seconds
+	 */
 	@Override
 	public void act(long now) {
 		
@@ -14,7 +23,11 @@ public class MyStage extends World{
 	
 	public MyStage() {
 	}
-	
+	/**
+	 * plays the music
+	 * @param musicFile the string of the path to the music file
+	 * @param multi true for playing multiple times, false for one time play
+	 */
 	public void playMusic(String musicFile,boolean multi) {
 		if(mediaPlayer!=null) {
 			mediaPlayer.stop();
@@ -28,7 +41,9 @@ public class MyStage extends World{
 		}
 	    mediaPlayer.play();
 	}
-	
+	/**
+	 * stops the music that is currently playing
+	 */
 	public void stopMusic() {
 		mediaPlayer.stop();
 	}
